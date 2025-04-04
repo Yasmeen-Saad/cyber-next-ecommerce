@@ -1,7 +1,7 @@
 import ProductContent from '@/components/ProductDetails';
 
-export const generateMetadata = async ({ params }: { params: { id: string } }) => {
-    const res = await fetch(`https://dummyjson.com/products/${params.id}`);
+export const generateMetadata = async ({ params : { id } }: { params: { id: string } }) => {
+    const res = await fetch(`https://dummyjson.com/products/${id}`);
     const product = await res.json();
 
     return {

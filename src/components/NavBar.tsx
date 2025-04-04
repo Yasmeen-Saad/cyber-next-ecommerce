@@ -1,8 +1,8 @@
-"use client";
 import React from 'react'
 import { Search, Heart, ShoppingCart, User } from "lucide-react";
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import NavLink from './NavLink';
+import { auth } from '@/util/auth';
 
 const navItems = [
     {name: 'Home', path: '/'},
@@ -10,9 +10,10 @@ const navItems = [
     {name: 'About', path: '/about'},  
 ];
 
-export default function NavBar() {
-  const pathName = usePathname();
-  console.log(pathName);
+export default async function NavBar() {
+  const session = await auth();
+  console.log(session);
+
   return (
     <nav className="w-full bg-white shadow-md">
       <div className="container mx-auto flex items-center justify-between py-4 px-10">
@@ -33,16 +34,20 @@ export default function NavBar() {
         <ul className="hidden md:flex space-x-6 text-gray-600">
             {navItems.map(({name, path}) => (
                 <li key={name} className="font-semibold hover:text-black cursor-pointer">
-                    <Link href={path} className={pathName === path ? 'text-black' : ''}>{name}</Link>
+                    <NavLink name={name} path={path}/>
                 </li>
             ))}
         </ul>
 
         <div className="flex space-x-4 text-gray-600">
-            <Heart className="cursor-pointer hover:text-black" size={22} />
-            <ShoppingCart className="cursor-pointer hover:text-black" size={22} />
+            <Link href="/favorites">
+              <Heart className="cursor-pointer hover:text-black" size={22} />
+            </Link>
+            <Link href="/cart">
+             <ShoppingCart className="cursor-pointer hover:text-black" size={22} />
+            </Link>
             <Link href="/account">
-                <User className="cursor-pointer hover:text-black" size={22} />
+              <User className="cursor-pointer hover:text-black" size={22} />
             </Link>
         </div>
       </div>

@@ -3,24 +3,25 @@
 import React from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
+
 const categories = [
-  { name: "All", count: 194 },
-  { name: "Beauty", count: 110 },
-  { name: "Fragrances", count: 125 },
-  { name: "Furniture", count: 68 },
-  { name: "Groceries", count: 44 },
-  { name: "Home", count: 15 },
-  { name: "Laptops", count: 15 },
-  { name: "Shirts", count: 15 },
-  { name: "Watches", count: 15 },
-  { name: "Shoes", count: 15 },
+  { name: "All", count: 100 },
+  { name: "Beauty", count: 5 },
+  { name: "Fragrances", count: 5 },
+  { name: "Furniture", count: 5 },
+  { name: "Groceries", count: 27 },
+  { name: "Home", count: 35 },
+  { name: "Laptops", count: 5 },
+  { name: "Shirts", count: 5 },
+  { name: "Watches", count: 6 },
+  { name: "Shoes", count: 5 },
 ];
 
 const priceRanges = [
-  { name: "Under $50", min: 0, max: 50, count: 85 },
-  { name: "$50 - $100", min: 50, max: 100, count: 132 },
-  { name: "$100 - $200", min: 100, max: 200, count: 95 },
-  { name: "Over $200", min: 200, max: null, count: 55 },
+  { name: "Under $50", min: 0, max: 50, count: 71 },
+  { name: "$50 - $100", min: 50, max: 100, count: 9 },
+  { name: "$100 - $200", min: 100, max: 200, count: 5 },
+  { name: "Over $200", min: 200, max: null, count: 15 },
 ];
 
 export default function Filteration() {
@@ -31,19 +32,19 @@ export default function Filteration() {
   const currentCategory = searchParams.get('category') || '';
   const currentPriceRange = searchParams.get('price')?.split('-') || [];
 
-  const updateFilters = (type: string, value: string) => {
+  const updateFilters = (type: string, value: string, isChecked: boolean) => {
     const params = new URLSearchParams(Array.from(searchParams.entries()));
     
     if (type === 'category') {
-      if (currentCategory === value) {
+      if (!isChecked || currentCategory === value.toLowerCase()) {
         params.delete('category');
       } else {
-        params.set('category', value);
+        params.set('category', value.toLowerCase());
       }
     }
 
     if (type === 'price') {
-      if (currentPriceRange.join('-') === value) {
+      if (!isChecked || currentPriceRange.join('-') === value) {
         params.delete('price');
       } else {
         params.set('price', value);
@@ -78,8 +79,14 @@ export default function Filteration() {
               <input
                 type="radio"
                 name="category"
-                checked={currentCategory === name}
-                onChange={() => updateFilters('category', name)}
+                checked={currentCategory === name.toLowerCase()}
+                onChange={(e) => updateFilters('category', name, e.target.checked)}
+                onClick={(e) => {
+                  if (currentCategory === name.toLowerCase()) {
+                    e.currentTarget.checked = false;
+                    updateFilters('category', 'all', false);
+                  }
+                }}
                 className="h-4 w-4 border-gray-300 text-black focus:ring-black"
               />
               <span className="text-gray-700">{name}</span>
@@ -113,7 +120,13 @@ export default function Filteration() {
                 type="radio"
                 name="price"
                 checked={currentPriceRange.join('-') === `${min}-${max}`}
-                onChange={() => updateFilters('price', `${min}-${max}`)}
+                onChange={(e) => updateFilters('price', `${min}-${max}`, e.target.checked)}
+                onClick={(e) => {
+                  if (currentPriceRange.join('-') === `${min}-${max}`) {
+                    e.currentTarget.checked = false;
+                    updateFilters('price', `${min}-${max}`, false);
+                  }
+                }}
                 className="h-4 w-4 border-gray-300 text-black focus:ring-black"
               />
               <span className="text-gray-700">{name}</span>
